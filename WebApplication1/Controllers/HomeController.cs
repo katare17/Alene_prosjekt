@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using WebApplication1.Data;
@@ -9,28 +10,32 @@ namespace WebApplication1.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly UserManager<IdentityUser> _userManager;
 
         private static List<PositionModel> positions = new List<PositionModel>();
 
         // Database connection
         private readonly ApplicationDbContext _context;
 
-        //
+        //In-memory storage
         private static List<AreaChange> changes = new List<AreaChange>();
+
+        //API services
         private readonly IKommuneInfoService _KommuneInfoService;
         private readonly IStedsnavnService _StedsnavnService;
 
-        public HomeController(ILogger<HomeController> logger, IKommuneInfoService kommuneInfoService, IStedsnavnService stedsnavnService, ApplicationDbContext context)
+        public HomeController(ILogger<HomeController> logger, IKommuneInfoService kommuneInfoService, IStedsnavnService stedsnavnService, ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _logger = logger;
             _KommuneInfoService = kommuneInfoService;
             _StedsnavnService = stedsnavnService;
             _context = context;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
         {
-            return View("Index2");
+            return View("Index");
         }
 
         [HttpPost]
