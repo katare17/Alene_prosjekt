@@ -1,0 +1,36 @@
+﻿@model WebApplication1.Models.LoginViewModel
+
+<h2>Logg inn</h2>
+
+<form asp-action="Login" method="post">
+    <!-- CSRF Protection -->
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="Email">E-post</label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Password">Passord</label>
+        <input asp-for="Password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div class="form-group form-check">
+        <input asp-for="RememberMe" class="form-check-input" />
+        <label asp-for="RememberMe" class="form-check-label">Husk meg</label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Logg inn</button>
+</form>
+
+<a asp-action="Register">Om du ikke har en konto kan du registrere deg her</a>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

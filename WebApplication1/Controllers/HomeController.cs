@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using WebApplication1.Data;
@@ -9,14 +10,17 @@ namespace WebApplication1.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly UserManager<WebUser> _userManager;
 
         private static List<PositionModel> positions = new List<PositionModel>();
 
         // Database connection
         private readonly ApplicationDbContext _context;
 
-        //
+        //In-memory storage
         private static List<AreaChange> changes = new List<AreaChange>();
+
+        //Api services
         private readonly IKommuneInfoService _KommuneInfoService;
         private readonly IStedsnavnService _StedsnavnService;
 
@@ -30,9 +34,11 @@ namespace WebApplication1.Controllers
 
         public IActionResult Index()
         {
-            return View("Index2");
+            return View("Index");
         }
 
+
+        // Register area change with GeoJson, description
         [HttpPost]
         public IActionResult RegisterAreaChange(string geoJson, string description)
         {
@@ -63,6 +69,15 @@ namespace WebApplication1.Controllers
             }
         }
 
+        private async Task<(string MunicipalityNumber, string MunicipalityName, string CountyName)> FindMunicipalityAsync(string geoJson)
+        {
+            var municipalityFinderService = HttpContext.RequestServices.GetRequiredService<KommuneInfoService>();
+
+            // Explicitly return all three elements
+            var result = await municipalityFinderService.FindMunicipalityFromGeoJsonAsync(geoJson);
+            return (result.MunicipalityNumber, result.MunicipalityName, result.CountyName);
+        }
+
         [HttpGet]
         public IActionResult AreaChangeOverview()
         {
@@ -88,7 +103,6 @@ namespace WebApplication1.Controllers
                     Kommunenummer = kommuneInfo.Kommunenummer,
                     Fylkesnavn = kommuneInfo.Fylkesnavn,
                     SamiskForvaltningsomrade = kommuneInfo.SamiskForvaltningsomrade,
-                    // Mulig problem her!!
                 };
                 return View("KommuneInfo", viewModel);
             }
@@ -126,17 +140,6 @@ namespace WebApplication1.Controllers
             }
         }
 
-        [HttpGet]
-        public ViewResult RegistrationForm()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public ViewResult RegistrationForm(UserData userData)
-        {
-            return View("Overview", userData);
-        }
 
         [HttpGet]
         public IActionResult CorrectMap()
