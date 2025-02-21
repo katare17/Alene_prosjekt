@@ -2,13 +2,30 @@
     ViewData["Title"] = "Register Change";
 }
 
-<h2>Register Change</h2>
+<body class="MinKlasse">
+    <h2>Registrer kartfeil</h2>
+    <b>Hvordan gjør man det?</b>
+    <br />
+    <br />
+    <b>Steg 1:</b> Klikk på ønsket type markering i menyen på venstre side av kartet.
+    <br />
+    <b>Steg 2:</b> Plassér markeringen på det aktuelle stedet på kartet.
+    <br />
+    <b>Steg 3:</b> Legg inn en beskrivelse av kartfeilen i tekstfeltet under kartet.
+    <br />
+    <b>Steg 4:</b> Trykk "Send" når du er fornøyd med informasjonen du har lagt til. 
+    <br />
+    <i>Du kan zoome inn og ut på kartet enten ved å trykke på "+" eller "-" eller du kan plassere musepekeren over dit du vil zoome inn og rulle på scrollehjulet.</i>
+
+</body>
+
+
 
 <!-- Map container with defined height -->
 <div id="map" style="height: 400px;"></div>
 <br />
 
-<form asp-action="RegisterAreaChange" method="post">
+<form asp-action="AreaChangeOverview" method="post">
 
     <input type="hidden" id="geoJsonInput" name="geoJson" />
     <div>
@@ -16,7 +33,7 @@
         <textarea id="description" name="Description" class="form-control"></textarea>
     </div>
     <br />
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="submit" class="btn btn-primary">Send</button>
 </form>
 
 @section Scripts {
@@ -36,7 +53,7 @@
 
 
     <script>
-        var map = L.map('map').setView([7.995472, 58.146768], 13);  // Center the map on a location
+        var map = L.map('map').setView([58.164048, 8.004007], 13);  // Center the map on a location
 
         // Add a base map layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

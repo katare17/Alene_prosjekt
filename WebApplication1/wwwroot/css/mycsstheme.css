@@ -11,7 +11,7 @@
  * Copyright 2011-2024 The Bootstrap Authors
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
-@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Mulish:wght@300&display=swap");
 svg {
     width: 50px;
     height: 50px;
@@ -83,8 +83,8 @@ svg {
     --bs-dark-border-subtle: #aea79f;
     --bs-white-rgb: 255, 255, 255;
     --bs-black-rgb: 0, 0, 0;
-    --bs-font-sans-serif: Ubuntu, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-    --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --bs-font-sans-serif: Mulish;
+    --bs-font-monospace: Mulish;;
     --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
     --bs-body-font-family: var(--bs-font-sans-serif);
     --bs-body-font-size: 1rem;
@@ -3358,9 +3358,9 @@ textarea.form-control-lg {
     --bs-btn-font-weight: 400;
     --bs-btn-line-height: 1.5;
     --bs-btn-color: var(--bs-body-color);
-    --bs-btn-bg: transparent;
+    --bs-btn-bg: #1A833B;
     --bs-btn-border-width: var(--bs-border-width);
-    --bs-btn-border-color: transparent;
+    --bs-btn-border-color: #156630;
     --bs-btn-border-radius: var(--bs-border-radius);
     --bs-btn-hover-border-color: transparent;
     --bs-btn-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 1px 1px rgba(0, 0, 0, 0.075);
