@@ -21,6 +21,7 @@
             background-color: #156630 !important;
             border-color: #1A833B !important;
         }
+
         navbar {
             background-color: #1A833B !important;
         }
@@ -28,6 +29,9 @@
             height: 200px;
             width: 300px;
             font-size: larger;
+        }
+        .logout{
+            float: right !important;
         }
 
     </style>
@@ -39,7 +43,13 @@
                 <div class="collapse navbar-collapse" id="navbarColor04">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Index" style="color: white !important"> Kartverket</a>
+                            <a class="nav-link btn" asp-controller="Account" asp-action="UserPage" style="color: white !important;"> Kartverket</a>
+                        </li>
+                        <li>
+                        <form asp-controller="Account" asp-action="Logout" method="post" class="form-inline">
+                                    @Html.AntiForgeryToken()
+                                <button type="submit" class="nav-link btn" style="color: white !important; border-color: transparent !important">Logg ut</button>
+                        </form>
                         </li>
                     </ul>
                 </div>

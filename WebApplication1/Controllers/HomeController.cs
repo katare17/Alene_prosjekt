@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 using WebApplication1.Data;
 using WebApplication1.Models;
 using WebApplication1.Services;
@@ -24,12 +23,13 @@ namespace WebApplication1.Controllers
         private readonly IKommuneInfoService _KommuneInfoService;
         private readonly IStedsnavnService _StedsnavnService;
 
-        public HomeController(ILogger<HomeController> logger, IKommuneInfoService kommuneInfoService, IStedsnavnService stedsnavnService, ApplicationDbContext context)
+        public HomeController(ILogger<HomeController> logger, IKommuneInfoService kommuneInfoService, IStedsnavnService stedsnavnService, ApplicationDbContext context, UserManager<WebUser> userManager)
         {
             _logger = logger;
             _KommuneInfoService = kommuneInfoService;
             _StedsnavnService = stedsnavnService;
             _context = context;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
@@ -37,53 +37,6 @@ namespace WebApplication1.Controllers
             return View("Index");
         }
 
-
-        // Register area change with GeoJson, description
-        [HttpPost]
-        public IActionResult RegisterAreaChange(string geoJson, string description)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(geoJson) || string.IsNullOrEmpty(description))
-                {
-                    return BadRequest("Invalid data.");
-                }
-
-                var newGeoChange = new GeoChange
-                {
-                    GeoJson = geoJson,
-                    Description = description
-                };
-
-                // Save to database
-                _context.GeoChanges.Add(newGeoChange);
-                _context.SaveChanges();
-
-                // Redirect to the overview of changes
-                return RedirectToAction("AreaChangeOverview");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}, Inner Exeption: {ex.InnerException?.Message}");
-                return StatusCode(500, "Internal server error");
-            }
-        }
-
-        private async Task<(string MunicipalityNumber, string MunicipalityName, string CountyName)> FindMunicipalityAsync(string geoJson)
-        {
-            var municipalityFinderService = HttpContext.RequestServices.GetRequiredService<KommuneInfoService>();
-
-            // Explicitly return all three elements
-            var result = await municipalityFinderService.FindMunicipalityFromGeoJsonAsync(geoJson);
-            return (result.MunicipalityNumber, result.MunicipalityName, result.CountyName);
-        }
-
-        [HttpGet]
-        public IActionResult AreaChangeOverview()
-        {
-            var changes_db = _context.GeoChanges.ToList();
-            return View(changes_db);
-        }
 
         [HttpPost]
         public async Task<IActionResult> KommuneInfo(string kommuneNr)
@@ -139,45 +92,5 @@ namespace WebApplication1.Controllers
                 return View("Index2");
             }
         }
-
-
-        [HttpGet]
-        public IActionResult CorrectMap()
-        {
-            return View();
-        }
-
-
-        [HttpPost]
-        public IActionResult CorrectMap(PositionModel model)
-        {
-            if (ModelState.IsValid)
-                    {
-                positions.Add(model);
-
-                return View("CorrectionOverview", positions);
-                }
-            return View();
-        }
-
-        [HttpGet]
-        public IActionResult CorrectionOverview()
-        {
-            return View(positions);
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [HttpGet]
-        public IActionResult RegisterAreaChange()
-        {
-            return View();
-        }
-
-
-  
     }
 }

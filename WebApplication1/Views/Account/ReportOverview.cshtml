@@ -1,0 +1,104 @@
+﻿@model List<WebApplication1.Data.GeoChange>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<WebUser> UserManager
+@{
+    ViewData["Title"] = "Overview";
+    Layout = "~/Views/Shared/UserLayout.cshtml";
+
+    var user = await UserManager.GetUserAsync(User);
+
+    // Create a dictionary to map UserId to Email
+    var userEmails = new Dictionary<string, string>();
+
+    // Fetch emails for each userId in the model
+    foreach (var element in Model)
+    {
+        if (!userEmails.ContainsKey(element.UserId))
+        {
+            var applicationUser = await UserManager.FindByIdAsync(element.UserId);
+            if (applicationUser != null)
+            {
+                userEmails[element.UserId] = applicationUser.Email;
+            }
+        }
+    }
+}
+
+<div class="container mt-5">
+    <h2 class="text-center">Oversikt over innsendte meldinger</h2>
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+        <!-- Left Side: Map -->
+        <div class="col-md-6">
+            <div id="map" style="height: 500px; width: 100%; border: 3px solid #ccc;"></div>
+        </div>
+
+        <!-- Right Side: Details Table -->
+        <div class="col-md-6">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Beskrivelse</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var change in Model)
+                    {
+                        <tr>
+                            <td>@change.Id</td>
+                            <td>@change.Description</td>
+                            <td>@userEmails[change.UserId]</td>
+                            <td>
+                                <div class="edit-delete-links">
+                                    <a asp-controller="Account" asp-action="Delete" asp-route-id="@change.Id" asp-route-returnUrl="@Url.Action("Delete", "Account")">Slett</a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var map = L.map('map').setView([58.160048, 8.003007], 13);
+
+            L.tileLayer('https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png', {
+                attribution: 'Kartdata &copy; <a href="https://www.kartverket.no/">Kartverket</a>'
+            }).addTo(map);
+
+            var changes = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model));
+
+            changes.forEach(function (element) {
+                try {
+                    console.log("Processing element:", element); // Debugging line
+
+                    var geoJsonData = typeof element.GeoJson === "string"
+                        ? JSON.parse(element.GeoJson) // If it's a string, parse it
+                        : element.GeoJson; // Otherwise, use as-is
+
+                    console.log("Parsed GeoJSON:", geoJsonData); // Debugging line
+
+                    if (geoJsonData) {
+                        L.geoJSON(geoJsonData).bindPopup(element.Description).addTo(map);
+                    } else {
+                        console.error("Invalid GeoJSON for element:", element);
+                    }
+                } catch (error) {
+                    console.error("Error parsing GeoJSON:", error);
+                }
+            });
+        });
+
+    </script>
+}
