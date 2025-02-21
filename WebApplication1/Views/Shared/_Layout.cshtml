@@ -11,13 +11,30 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mulish" />
     <style>
         body {
-            font-family: "Mulish", sans-serif;
+            font-family: "Mulish", sans-serif !important;
         }
+        button {
+            background-color: #1A833B !important;
+            border-color: #156630 !important;
+        }
+        button:hover {
+            background-color: #156630 !important;
+            border-color: #1A833B !important;
+        }
+        navbar {
+            background-color: #1A833B !important;
+        }
+        .big-btn {
+            height: 200px;
+            width: 300px;
+            font-size: larger;
+        }
+
     </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary" style="background-color: #1A833B !important">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#"></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor04" aria-controls="navbarColor04" aria-expanded="false" aria-label="Toggle navigation">
@@ -25,9 +42,8 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarColor04">
                     <ul class="navbar-nav me-auto">
-                        </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Index"> Kartverket</a>
+                            <a class="nav-link" asp-controller="Home" asp-action="Index" style="color: white !important"> Kartverket</a>
                         </li>
                     </ul>
                 </div>

@@ -1,6 +1,6 @@
 ﻿@model WebApplication1.Models.RegisterViewModel
 
-<h2>Register</h2>
+<h2>Registrer ny konto</h2>
 
 <form asp-action="Register" method="post">
     <!-- CSRF Protection -->
@@ -24,10 +24,10 @@
         <input asp-for="ConfirmPassword" class="form-control" />
         <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
     </div>
-
-    <button type="submit" class="btn btn-primary">Register</button>
+    <br />
+    <button type="submit" class="btn btn-primary">Registrer</button>
 </form>
-
+<br />
 <a asp-action="Login">Har du allerede en bruker kan du logge deg inn her</a>
 
 @section Scripts {
