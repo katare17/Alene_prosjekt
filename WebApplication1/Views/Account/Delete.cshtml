@@ -1,0 +1,65 @@
+﻿@model WebApplication1.Data.GeoChange
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/UserLayout.cshtml";
+
+}
+
+@* Tukling må gjøres her
+ *@
+
+<h1>Slett rapport</h1>
+
+<h3>Vil du slette elementet?</h3>
+<div>
+    <hr />
+    <form asp-action="Delete" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Slett</button>
+        <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("ReportOverview", "Account")'">Avbryt</button>
+    </form>
+</div>
+
+<!-- Map container -->
+<div id="map" style="height: 400px; width: 100%; border: 3px solid #ccc; margin-top: 20px;"></div>
+
+@section Scripts {
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var map = L.map('map').setView([58.160048, 8.003007], 10); // Default center position
+
+            L.tileLayer('https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png', {
+                attribution: 'Kartdata &copy; <a href="https://www.kartverket.no/">Kartverket</a>'
+            }).addTo(map);
+
+            // Ensure GeoJSON data is correctly passed
+            var geoJsonData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.GeoJson));
+
+            console.log("GeoJSON Data:", geoJsonData); // Debugging
+
+            try {
+                if (geoJsonData && geoJsonData !== "null" && geoJsonData !== "\"\"") {
+                    var parsedGeoJson = JSON.parse(geoJsonData);
+
+                    var geoJsonLayer = L.geoJSON(parsedGeoJson).addTo(map);
+
+                    // Bind popup with the description
+                    geoJsonLayer.bindPopup("Beskrivelse: " + @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Description)));
+
+                    // Fit the map to the bounds of the GeoJSON layer
+                    map.fitBounds(geoJsonLayer.getBounds());
+                } else {
+                    console.warn("No valid GeoJSON data available.");
+                }
+            } catch (error) {
+                console.error("Error parsing GeoJSON:", error);
+            }
+        });
+    </script>
+}

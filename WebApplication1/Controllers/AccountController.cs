@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using WebApplication1.Data;
 using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
@@ -8,11 +12,14 @@ namespace WebApplication1.Controllers
     {
         private readonly UserManager<WebUser> _userManager;
         private readonly SignInManager<WebUser> _signInManager;
+        private readonly ApplicationDbContext _context;
 
-        public AccountController(UserManager<WebUser> userManager, SignInManager<WebUser> signInManager)
+
+        public AccountController(UserManager<WebUser> userManager, SignInManager<WebUser> signInManager, ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _context = context;
         }
 
         [HttpGet]
@@ -103,6 +110,7 @@ namespace WebApplication1.Controllers
             return View(model);
         }
 
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
@@ -118,16 +126,99 @@ namespace WebApplication1.Controllers
             }
         }
 
+        [Authorize(Roles = "User")]
         [HttpGet]
         public IActionResult UserPage()
         {
             return View();
         }
 
-        [HttpGet]
-        public IActionResult CaseworkerPage()
+        [Authorize(Roles = "User")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UserPage(string geoJson, string description)
         {
-            return View();
+            try
+            {
+                if (string.IsNullOrEmpty(geoJson) || string.IsNullOrEmpty(description))
+                {
+                    return BadRequest("GeoJson and description must be provided");
+                }
+
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized("User not found");
+                }
+
+                // Defines a new GeoChange and adds it to the database
+                var newChange = new GeoChange
+                {
+                    GeoJson = geoJson,
+                    Description = description,
+                    UserId = userId,
+                };
+
+                _context.GeoChanges.Add(newChange);
+                await _context.SaveChangesAsync();
+
+                // Redirect to the overview of changes
+                return RedirectToAction("ReportOverview");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
+        [Authorize(Roles = "User")]
+        [HttpGet]
+        public async Task<IActionResult> ReportOverview()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var userChanges = await _context.GeoChanges
+                .Where(change => change.UserId == user.Id)
+                .ToListAsync();
+
+            return View(userChanges);
+        }
+
+        [Authorize(Roles = "User")]
+        [HttpGet]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var geoChange = await _context.GeoChanges
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (geoChange == null)
+            {
+                return NotFound();
+            }
+
+            return View(geoChange);
+        }
+
+        [Authorize(Roles = "User")]
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var geoChange = await _context.GeoChanges.FindAsync(id);
+            if (geoChange != null)
+            {
+                _context.GeoChanges.Remove(geoChange);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("ReportOverview", "Account");
+        }
+
     }
 }
