@@ -2,7 +2,6 @@
 {
     public class ApiSettings
     {
-        public string KommuneInfoApiBaseUrl { get; set; }
-        public string StedsnavnApiBaseUrl { get; set; }
+        public required string KommuneInfoApiBaseUrl { get; set; }
     }
 }

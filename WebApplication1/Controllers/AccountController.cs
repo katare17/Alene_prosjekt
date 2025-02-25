@@ -13,13 +13,15 @@ namespace WebApplication1.Controllers
         private readonly UserManager<WebUser> _userManager;
         private readonly SignInManager<WebUser> _signInManager;
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<AccountController> _logger;
 
 
-        public AccountController(UserManager<WebUser> userManager, SignInManager<WebUser> signInManager, ApplicationDbContext context)
+        public AccountController(UserManager<WebUser> userManager, SignInManager<WebUser> signInManager, ApplicationDbContext context, ILogger<AccountController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _context = context;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -142,13 +144,25 @@ namespace WebApplication1.Controllers
             {
                 if (string.IsNullOrEmpty(geoJson) || string.IsNullOrEmpty(description))
                 {
-                    return BadRequest("GeoJson and description must be provided");
+                    return BadRequest("GeoJson og beskrivelse må legges til");
                 }
 
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (string.IsNullOrEmpty(userId))
                 {
-                    return Unauthorized("User not found");
+                    return Unauthorized("Kunne ikke finne bruker");
+                }
+
+                // Finn kommuneinformasjon
+                var (Kommunenummer, Kommunenavn, Fylkesnavn) = await FinnKommuneAsync(geoJson);
+
+                // Logg kommuneinformasjon
+                _logger.LogInformation($"Kommunenummer: {Kommunenummer}, Kommunenavn: {Kommunenavn}");
+
+                // Se om vi fant en kommune
+                if (string.IsNullOrEmpty(Kommunenummer) || string.IsNullOrEmpty(Kommunenavn))
+                {
+                    return BadRequest("Kunne ikke finne kommuneinformasjon. Vennligst sjekk koordinatene.");
                 }
 
                 // Defines a new GeoChange and adds it to the database
@@ -157,6 +171,9 @@ namespace WebApplication1.Controllers
                     GeoJson = geoJson,
                     Description = description,
                     UserId = userId,
+                    Kommunenummer = Kommunenummer,
+                    Kommunenavn = Kommunenavn,
+                    Fylkesnavn = Fylkesnavn,
                 };
 
                 _context.GeoChanges.Add(newChange);
@@ -167,12 +184,25 @@ namespace WebApplication1.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                _logger.LogError(ex, "En feil oppstod ved lagring av endring");
+                return StatusCode(500, "Intern serverfeil");
             }
         }
+
+        // Metode som henter kommuneinfo fra GeoJSON
+        private async Task<(string Kommunenummer, string Kommunenavn, string Fylkesnavn)> FinnKommuneAsync(string geoJson)
+        {
+            var kommunefinner = HttpContext.RequestServices.GetRequiredService<Kommunefinner>();
+
+            // Spesifiserer at alle tre tingene skal hentes 
+            var result = await kommunefinner.FinnKommuneFraGeoJsonAsync(geoJson);
+            return (result.Kommunenummer, result.Kommunenavn, result.Fylkesnavn);
+        }
+
+
         [Authorize(Roles = "User")]
         [HttpGet]
-        public async Task<IActionResult> ReportOverview()
+            public async Task<IActionResult> ReportOverview()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -220,5 +250,41 @@ namespace WebApplication1.Controllers
             return RedirectToAction("ReportOverview", "Account");
         }
 
+        [Authorize(Roles = "Caseworker")]
+        [HttpPost]
+        public async Task<IActionResult> Approve(int id)
+        {
+            var change = await _context.GeoChanges.FindAsync(id);
+            if (change != null)
+            {
+                change.IsApproved = true;
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("CaseworkerPage");
+        }
+
+        [Authorize(Roles = "Caseworker")]
+        [HttpPost]
+        public async Task<IActionResult> Reject(int id)
+        {
+            var change = await _context.GeoChanges.FindAsync(id);
+            if (change != null)
+            {
+                change.IsApproved = false;
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("CaseworkerPage");
+        }
+        public async Task<IActionResult> ApprovedReports()
+        {
+            var geoChanges = await _context.GeoChanges.Where(c => c.IsApproved == true).ToListAsync();
+            return View(geoChanges);
+        }
+
+        public async Task<IActionResult> DeniedReports()
+        {
+            var geoChanges = await _context.GeoChanges.Where(c => c.IsApproved == false).ToListAsync();
+            return View(geoChanges);
+        }
     }
 }

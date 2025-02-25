@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.Identity
 @inject UserManager<WebUser> UserManager
 @{
-    ViewData["Title"] = "Overview";
+    ViewData["Title"] = "Approved Reports";
 
     // Retrieve the currently logged-in user (for user-related display)
     var user = await UserManager.GetUserAsync(User);
@@ -23,22 +23,11 @@
         }
     }
 
-    // Filter the model to only include GeoChanges where IsApproved is null
-    var filteredModel = Model.Where(change => change.IsApproved == null).ToList();
+    // Filter the model to only include GeoChanges where IsApproved is true
+    var filteredModel = Model.Where(change => change.IsApproved == true).ToList();
 }
 
-<h2 class="text-center">Innsendte Rapporter</h2>
-
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-md-4">
-            <a asp-controller="Account" asp-action="ApprovedReports" class="btn btn-primary">Approved Reports</a>
-        </div>
-        <div class="col-md-4">
-            <a asp-controller="Account" asp-action="DeniedReports" class="btn btn-primary">Denied Reports</a>
-        </div>
-    </div>
-</div>
+<h2 class="text-center">Godkjente rapporter</h2>
 
 <div class="container mt-5">
     <div id="map" style="height: 500px; width: 100%; border: 3px solid #ccc;"></div>
@@ -52,7 +41,6 @@
                 <th>GeoJSON</th>
                 <th>Beskrivelse</th>
                 <th>Epost</th>
-                <th>Godkjenn</th>
                 <th>Avslå</th>
                 <th>Slett</th>
             </tr>
@@ -77,12 +65,6 @@
                         }
                     </td>
                     <td>
-                        <form asp-controller="Account" asp-action="Approve" method="post">
-                            <input type="hidden" name="id" value="@change.Id" />
-                            <button type="submit" class="btn btn-success">Godkjenn</button>
-                        </form>
-                    </td>
-                    <td>
                         <form asp-controller="Account" asp-action="Reject" method="post">
                             <input type="hidden" name="id" value="@change.Id" />
                             <button type="submit" class="btn btn-danger">Avslå</button>
@@ -90,7 +72,7 @@
                     </td>
                     <td>
                         <div class="edit-delete-links">
-                            <a asp-controller="Account" asp-action="CaseworkerDelete" asp-route-id="@change.Id" asp-route-returnUrl="@Url.Action("CaseworkerOverview", "Account")">Slett</a>
+                            <a asp-controller="Account" asp-action="CaseworkerDelete" asp-route-id="@change.Id" asp-route-returnUrl="@Url.Action("ApprovedReports", "Account")">Slett</a>
                         </div>
                     </td>
                 </tr>

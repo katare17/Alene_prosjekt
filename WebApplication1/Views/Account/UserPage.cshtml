@@ -1,4 +1,6 @@
-﻿﻿@{
+﻿﻿model List<WebApplication1.Data.GeoChanges>
+
+@{
     ViewData["Title"] = "Register Change";
     Layout = "~/Views/Shared/UserLayout.cshtml";
 }
@@ -29,16 +31,17 @@
 <form asp-action="UserPage" method="post">
 
     <input type="hidden" id="geoJsonInput" name="geoJson" />
+
     <div>
-        <label for="description">Change Description:</label>
-        <textarea id="description" name="Description" class="form-control"></textarea>
+        <label for="description">Legg til beskrivelse:</label>
+        <textarea id="description" name="Description" class="form-control" placeholder="Skriv beskrivelse her"></textarea>
     </div>
     <br />
     <button type="submit" class="btn btn-primary">Send</button>
 </form>
 
 @section Scripts {
-    <!-- These frour lines are important to keep -->
+    <!-- These four lines are important to keep -->
     <!-- 1. Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 

@@ -43,6 +43,8 @@
                         <th>ID</th>
                         <th>Beskrivelse</th>
                         <th>Email</th>
+                        <th>Kommune</th>
+                        <th>Fylke</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -52,6 +54,8 @@
                             <td>@change.Id</td>
                             <td>@change.Description</td>
                             <td>@userEmails[change.UserId]</td>
+                            <td>@change.Kommunenavn</td>
+                            <td>@change.Fylkesnavn</td>
                             <td>
                                 <div class="edit-delete-links">
                                     <a asp-controller="Account" asp-action="Delete" asp-route-id="@change.Id" asp-route-returnUrl="@Url.Action("Delete", "Account")">Slett</a>

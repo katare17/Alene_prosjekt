@@ -1,21 +1,24 @@
 ﻿@model WebApplication1.Data.GeoChange
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Caseworker Delete";
     Layout = "~/Views/Shared/UserLayout.cshtml";
 
 }
+
+@* Tukling må gjøres her
+ *@
 
 <h1>Slett rapport</h1>
 
 <h3>Vil du slette elementet?</h3>
 <div>
     <hr />
-    <form asp-action="Delete" method="post">
+    <form asp-action="CaseworkerDelete" method="post">
         @Html.AntiForgeryToken()
         <input type="hidden" asp-for="Id" />
         <button type="submit" class="btn btn-danger">Slett</button>
-        <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("ReportOverview", "Account")'">Avbryt</button>
+        <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("CaseworkerPage", "Account")'">Avbryt</button>
     </form>
 </div>
 
