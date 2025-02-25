@@ -18,7 +18,19 @@ namespace WebApplication1.Data
         [Required]
         public string? Description { get; set; }
 
+        public bool? IsApproved { get; set; }
+
+
         // Navigation property
         public virtual WebUser? User { get; set; }
+
+        [Required]
+        public string Kommunenavn { get; set; }
+        [Required]
+
+        public string Kommunenummer { get; set; }
+        [Required]
+
+        public string Fylkesnavn { get; set; }
     }
 }

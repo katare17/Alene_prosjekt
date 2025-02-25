@@ -1,6 +1,5 @@
 using WebApplication1.API_Models;
 using WebApplication1.Data;
-using WebApplication1.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
@@ -12,8 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
 
 // Configure HTTP clients
-builder.Services.AddHttpClient<IKommuneInfoService, KommuneInfoService>();
-builder.Services.AddHttpClient<IStedsnavnService, StedsnavnService>();
+builder.Services.AddHttpClient<Kommunefinner>();
 
 // Configure the database context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
