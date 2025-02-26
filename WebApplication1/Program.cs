@@ -7,24 +7,24 @@ using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure API settings
+// Konfigurerer API-innstillinger
 builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
 
-// Configure HTTP clients
+// Konfigurerer HTTP-klienter
 builder.Services.AddHttpClient<Kommunefinner>();
 
-// Configure the database context
+// Konfigurerer databasekonteksten
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
     new MySqlServerVersion(new Version(10, 5, 9)),
     mySqlOptions => mySqlOptions.EnableRetryOnFailure()));
 
-// Add Identity services
+// Legger til Identity-tjenester
 builder.Services.AddIdentity<WebUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-// Add services to the container.
+// Legger til tjenester i containeren
 builder.Services.AddControllersWithViews();
 
 SetupAuthentication(builder);
@@ -61,7 +61,7 @@ using (var scope = app.Services.CreateScope())
         }
         else
         {
-            // Handle errors (e.g., log them)
+            // Håndtering av errors
             foreach (var error in result.Errors)
             {
                 Console.WriteLine($"Error creating user: {error.Description}");
@@ -70,7 +70,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Configure the HTTP request pipeline.
+// Konfigurerer HTTP-request-pipelinen
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -82,8 +82,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// Add authentication middleware
-app.UseAuthentication(); // Ensure this is included
+// Legger til autentiseringsmiddleware
+app.UseAuthentication(); // Påse at dette er med
 app.UseAuthorization();
 app.UseAntiforgery();
 
@@ -95,10 +95,10 @@ app.Run();
 
 void SetupAuthentication(WebApplicationBuilder builder)
 {
-    // Setup for Authentication
+    // Oppsett for autentisering
     builder.Services.Configure<IdentityOptions>(options =>
     {
-        // Default Lockout settings.
+        // Standardinnstilling for utlåsing (Lockout)
         options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
         options.Lockout.MaxFailedAccessAttempts = 5;
         options.Lockout.AllowedForNewUsers = false;
@@ -106,7 +106,7 @@ void SetupAuthentication(WebApplicationBuilder builder)
         options.SignIn.RequireConfirmedEmail = false;
         options.SignIn.RequireConfirmedAccount = false;
         options.User.RequireUniqueEmail = true;
-        // Password settings
+        // Passordinnstillinger/-krav
         options.Password.RequireDigit = false;
         options.Password.RequireLowercase = false;
         options.Password.RequireNonAlphanumeric = false;

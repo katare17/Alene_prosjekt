@@ -24,7 +24,7 @@
 
 
 
-<!-- Map container with defined height -->
+<!-- Kartet hentes og det legges inn skjema til innsending av feil -->
 <div id="map" style="height: 400px;"></div>
 <br />
 
@@ -41,7 +41,7 @@
 </form>
 
 @section Scripts {
-    <!-- These four lines are important to keep -->
+    <!-- Disse fire linjene er viktige -->
     <!-- 1. Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
@@ -57,18 +57,18 @@
 
 
     <script>
-        // Initialize the map
-                var map = L.map('map').setView([58.160048, 8.003007], 13); // Center the map on a specific location
+        // Henter inn kartet 
+                var map = L.map('map').setView([58.160048, 8.003007], 13); // Setter kartet i Kristiansand
 
         var tileLayer = L.tileLayer('https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png', {
             attribution: 'Kartdata &copy; <a href="https://www.kartverket.no/">Kartverket</a>'
         }).addTo(map);
 
-        // Initialize the feature group that will hold the drawn shapes
+        // Lager en feature group som skal holde elementene som brukes
         var drawnItems = new L.FeatureGroup();
         map.addLayer(drawnItems);
 
-        // Create the drawing control on the left-hand side
+        // Lager elementmenyen på venstre side i kartet
         var drawControl = new L.Control.Draw({
             draw: {
                 polygon: true,
@@ -83,18 +83,18 @@
                 });
         map.addControl(drawControl);
 
-                // Event handling when a layer is drawn on the map
+                // Håndterer elementtegningen når den lages på kartet
         map.on(L.Draw.Event.CREATED, function (e) {
             var type = e.layerType,
                 layer = e.layer;
 
                     drawnItems.addLayer(layer);
 
-                    // Get the GeoJSON representation of the drawn layer
+                    // Ordne en GeoJSON-representasjon av det tegnede elementet og gjør det til en string
             var geoJsonData = layer.toGeoJSON();
             var geoJsonString = JSON.stringify(geoJsonData);
 
-                    // Set the GeoJSON string into the hidden input field in the form
+                    // Sett GeoJSON-stringen i det hemmelige informasjonsfeltet i skjemaet
             document.getElementById('geoJsonInput').value = geoJsonString;
                 });
     </script>

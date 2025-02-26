@@ -3,11 +3,11 @@ using WebApplication1.API_Models;
 
 public class Kommunefinner
 {
-    private readonly HttpClient _httpClient; // HttpClient for making API requests
+    private readonly HttpClient _httpClient; // HttpClient til å lage API-forespørsler
     private readonly ILogger<Kommunefinner> _logger;
-    private readonly string _apiBaseUrl; // Base URL for the municipality information API
+    private readonly string _apiBaseUrl; // Base-URL for kommunefinner API
 
-    // Constructor to initialize the service with dependencies
+    // Konstruktør for å initialisere tjenesten med avhengigheter
     public Kommunefinner(
         HttpClient httpClient,
         ILogger<Kommunefinner> logger,
@@ -15,22 +15,22 @@ public class Kommunefinner
     {
         _httpClient = httpClient;
         _logger = logger;
-        _apiBaseUrl = configuration["ApiSettings:KommuneInfoApiBaseUrl"]; // Get the base URL 
+        _apiBaseUrl = configuration["ApiSettings:KommuneInfoApiBaseUrl"]; // Hent base-URL fra konfigurasjon
     }
 
-    // Asynchronously finds the municipality based on GeoJSON input
+    // (Asynkront) Finner kommunen basert på GeoJSON-informasjon og returnerer Kommunenummer, Kommunenavn og Fylkesnavn
     public async Task<(string Kommunenummer, string Kommunenavn, string Fylkesnavn)> FinnKommuneFraGeoJsonAsync(string geoJson)
     {
         try
         {
-            // Parse the GeoJSON to extract coordinates
+            // Analyser GeoJSON for å finne koordinater
             using JsonDocument doc = JsonDocument.Parse(geoJson);
             JsonElement root = doc.RootElement;
 
-            // Array to hold extracted coordinates
+            // Array som skal holde koordinatene
             double[] coordinates = null;
 
-            // Check if the root is a FeatureCollection
+            // Sjekk om root er en FeatureCollection
             if (root.GetProperty("type").GetString() == "FeatureCollection")
             {
                 if (root.TryGetProperty("features", out JsonElement features) && features.GetArrayLength() > 0)
@@ -45,7 +45,7 @@ public class Kommunefinner
             }
             else if (root.GetProperty("type").GetString() == "Feature")
             {
-                // Handle single Feature
+                // Håndterer enkel Feature
                 if (root.TryGetProperty("geometry", out JsonElement geometry) &&
                     geometry.TryGetProperty("type", out JsonElement geometryType))
                 {
@@ -54,7 +54,7 @@ public class Kommunefinner
             }
             else if (root.GetProperty("type").GetString() == "Point")
             {
-                // Handle direct Point
+                // Håndterer direkte punkt
                 coordinates = root.GetProperty("coordinates").EnumerateArray()
                     .Select(x => x.GetDouble())
                     .ToArray();
@@ -66,11 +66,11 @@ public class Kommunefinner
                 return (null, null, null);
             }
 
-            // Assuming coordinates[0] is longitude (ost) and coordinates[1] is latitude (nord)
+            // Antar at koordinat[0] er lengdegrad (øst) og koordinat[1] er breddegrad (nord)
             double longitude = coordinates[0];
             double latitude = coordinates[1];
 
-            // Make API call to find municipality
+            // Kaller på API for å finne kommunen
             var response = await _httpClient.GetAsync(
                 $"{_apiBaseUrl}/punkt?nord={latitude}&ost={longitude}&koordsys=4258");
 
@@ -78,14 +78,14 @@ public class Kommunefinner
             {
                 var content = await response.Content.ReadAsStringAsync();
 
-                // Deserialize using the KommuneInfo model
+                // Deserialiserer ved bruk av KommuneInfo-modellen
                 var KommuneInformasjon = JsonSerializer.Deserialize<KommuneInformasjon>(content, new JsonSerializerOptions
                 {
                     // case-insensitive matching
                     PropertyNameCaseInsensitive = true
                 });
 
-                // Return the values from the deserialized object
+                // Returner verdiene fra det deserialiserte objektet
                 return (
                     KommuneInformasjon?.Kommunenummer,
                     KommuneInformasjon?.Kommunenavn,
@@ -97,7 +97,7 @@ public class Kommunefinner
                 var errorContent = await response.Content.ReadAsStringAsync();
                 _logger.LogWarning($"API call failed with status code: {response.StatusCode}, Response: {errorContent}");
 
-                // Return null values for all three elements
+                // Returner null-verdier for alle tre elementene
                 return (null, null, null);
             }
         }
@@ -113,14 +113,14 @@ public class Kommunefinner
         }
     }
 
-    // Method to extract coordinates from a given geometry element based on its type
+    // Metode som extracter koordinater fra et gitt geometri-element basert på typen
     private double[] ExtractCoordinatesFromGeometry(JsonElement geometry, JsonElement geometryType)
     {
         string type = geometryType.GetString();
 
         try
         {
-            // Switch expression to handle different geometry types and extract coordinates
+            // Switch-expression som håndterer forskjellige geometrityper og extracter koordinater
             return type switch
             {
                 "Point" => geometry.GetProperty("coordinates").EnumerateArray()

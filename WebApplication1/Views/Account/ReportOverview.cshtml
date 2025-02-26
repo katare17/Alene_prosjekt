@@ -7,10 +7,10 @@
 
     var user = await UserManager.GetUserAsync(User);
 
-    // Create a dictionary to map UserId to Email
+    // Lager en dictionary hvor brukerepost lagres
     var userEmails = new Dictionary<string, string>();
 
-    // Fetch emails for each userId in the model
+    // Henter epostene til brukerne
     foreach (var element in Model)
     {
         if (!userEmails.ContainsKey(element.UserId))
@@ -28,14 +28,13 @@
     <h2 class="text-center">Oversikt over innsendte meldinger</h2>
 </div>
 
+@* Rapportoversikt, kart på venstre, detaljer på høyre *@
 <div class="container mt-5">
     <div class="row">
-        <!-- Left Side: Map -->
         <div class="col-md-6">
             <div id="map" style="height: 500px; width: 100%; border: 3px solid #ccc;"></div>
         </div>
 
-        <!-- Right Side: Details Table -->
         <div class="col-md-6">
             <table class="table">
                 <thead>
@@ -85,13 +84,13 @@
 
             changes.forEach(function (element) {
                 try {
-                    console.log("Processing element:", element); // Debugging line
+                    console.log("Processing element:", element); // Debugging
 
                     var geoJsonData = typeof element.GeoJson === "string"
-                        ? JSON.parse(element.GeoJson) // If it's a string, parse it
-                        : element.GeoJson; // Otherwise, use as-is
+                        ? JSON.parse(element.GeoJson) // Parse hvis string
+                        : element.GeoJson; // Hvis ikke, bruk som den er
 
-                    console.log("Parsed GeoJSON:", geoJsonData); // Debugging line
+                    console.log("Parsed GeoJSON:", geoJsonData); // Debugging
 
                     if (geoJsonData) {
                         L.geoJSON(geoJsonData).bindPopup(element.Description).addTo(map);

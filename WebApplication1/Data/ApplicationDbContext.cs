@@ -17,12 +17,12 @@ namespace WebApplication1.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configure the relationship between GeoChange and WebUser 
+            // Konfigureer forholdet mellom GeoChange og WebUser
             modelBuilder.Entity<GeoChange>()
                 .HasOne(g => g.User)
-                .WithMany() // Assuming a user can have many GeoChanges
+                .WithMany() // Antar at en bruker kan ha mange GeoChanges
                 .HasForeignKey(g => g.UserId)
-                .OnDelete(DeleteBehavior.Cascade); // Optional: Define delete behavior
+                .OnDelete(DeleteBehavior.Cascade); // Valgfritt: Definer sletteadferd
         }
     }
 }

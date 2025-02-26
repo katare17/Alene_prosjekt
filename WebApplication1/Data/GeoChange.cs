@@ -8,7 +8,7 @@ namespace WebApplication1.Data
         [Key]
         public int Id { get; set; }
 
-        // Foreign key for the user
+        // Fremmednøkkel for brukeren
         [ForeignKey("User")]
         public string UserId { get; set; }
 
@@ -20,10 +20,6 @@ namespace WebApplication1.Data
 
         public bool? IsApproved { get; set; }
 
-
-        // Navigation property
-        public virtual WebUser? User { get; set; }
-
         [Required]
         public string Kommunenavn { get; set; }
         [Required]
@@ -32,5 +28,9 @@ namespace WebApplication1.Data
         [Required]
 
         public string Fylkesnavn { get; set; }
+
+
+        // Navigation property for brukeren
+        public virtual WebUser? User { get; set; }
     }
 }

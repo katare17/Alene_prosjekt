@@ -10,10 +10,10 @@ namespace WebApplication1.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly UserManager<WebUser> _userManager;
 
-        // Database connection
+        // Databasekobling
         private readonly ApplicationDbContext _context;
 
-        ////In-memory storage
+        // Minne-lagring
         private static List<AreaChange> changes = new List<AreaChange>();
 
 

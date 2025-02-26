@@ -4,13 +4,13 @@
 @{
     ViewData["Title"] = "Denied Reports";
 
-    // Retrieve the currently logged-in user (for user-related display)
+    // Henter inn den innloggede brukeren (for brukerrelatert visning)
     var user = await UserManager.GetUserAsync(User);
 
-    // Create a dictionary to map UserId to Email
+    // Lager en dictionary hvor brukerepost lagres
     var userEmails = new Dictionary<string, string>();
 
-    // Fetch emails for each UserId in the model
+    // Henter epostene til brukerne
     foreach (var change in Model)
     {
         if (!userEmails.ContainsKey(change.UserId))
@@ -23,7 +23,7 @@
         }
     }
 
-    // Filter the model to only include GeoChanges where IsApproved is false
+    // Filterer modellen for å kun inkludere GeoChanges hvor IsApproved er falsk
     var filteredModel = Model.Where(change => change.IsApproved == false).ToList();
 }
 
