@@ -14,8 +14,8 @@
     <form asp-action="Delete" method="post">
         @Html.AntiForgeryToken()
         <input type="hidden" asp-for="Id" />
-        <button type="submit" class="btn btn-danger">Slett</button>
-        <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("ReportOverview", "Account")'">Avbryt</button>
+        <input type="submit" value="Slett" class="btn btn-danger" /> |
+        <a asp-action="ReportOverview" asp-controller="Account" class="btn btn-secondary">Avbryt</a>
     </form>
 </div>
 

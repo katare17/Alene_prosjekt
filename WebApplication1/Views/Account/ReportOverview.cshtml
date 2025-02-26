@@ -57,7 +57,7 @@
                             <td>@change.Fylkesnavn</td>
                             <td>
                                 <div class="edit-delete-links">
-                                    <a asp-controller="Account" asp-action="Delete" asp-route-id="@change.Id" asp-route-returnUrl="@Url.Action("Delete", "Account")">Slett</a>
+                                    <a asp-controller="Account" asp-action="Delete" class="btn btn-danger" asp-route-id="@change.Id" asp-route-returnUrl="@Url.Action("Delete", "Account")">Slett</a>
                                 </div>
                             </td>
                         </tr>
@@ -84,13 +84,13 @@
 
             changes.forEach(function (element) {
                 try {
-                    console.log("Processing element:", element); // Debugging
+                    console.log("Processing element:", element); // Debuggingslinje
 
                     var geoJsonData = typeof element.GeoJson === "string"
-                        ? JSON.parse(element.GeoJson) // Parse hvis string
-                        : element.GeoJson; // Hvis ikke, bruk som den er
+                        ? JSON.parse(element.GeoJson) // Om det er en String så parses den
+                        : element.GeoJson; // Ellers så brukes den som den er
 
-                    console.log("Parsed GeoJSON:", geoJsonData); // Debugging
+                    console.log("Parsed GeoJSON:", geoJsonData); // Debuggingslinje
 
                     if (geoJsonData) {
                         L.geoJSON(geoJsonData).bindPopup(element.Description).addTo(map);

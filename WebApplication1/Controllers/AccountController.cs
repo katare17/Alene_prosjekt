@@ -100,14 +100,6 @@ namespace WebApplication1.Controllers
                         return RedirectToAction("Index", "Home");
                     }
                 }
-                else if (result.RequiresTwoFactor)
-                {
-                    return RedirectToAction("TwoFactorLogin", new { returnUrl, model.RememberMe });
-                }
-                else if (result.IsLockedOut)
-                {
-                    return RedirectToAction("Lockout");
-                }
                 else
                 {
                     ModelState.AddModelError(string.Empty, "Login failed.");
@@ -259,7 +251,6 @@ namespace WebApplication1.Controllers
             return RedirectToAction("ReportOverview", "Account");
         }
 
-
         [Authorize(Roles = "Caseworker")]
         [HttpPost]
         public async Task<IActionResult> Approve(int id)
@@ -270,7 +261,7 @@ namespace WebApplication1.Controllers
                 change.IsApproved = true;
                 await _context.SaveChangesAsync();
             }
-            return RedirectToAction("CaseworkerPage");
+                return RedirectToAction("CaseworkerPage");
         }
 
 
@@ -341,6 +332,104 @@ namespace WebApplication1.Controllers
         {
             var geoChanges = await _context.GeoChanges.Where(c => c.IsApproved == false).ToListAsync();
             return View(geoChanges);
+        }
+
+
+        [Authorize(Roles = "Caseworker")]
+        [HttpGet]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return View(user);
+        }
+        [Authorize(Roles = "Caseworker")]
+        [HttpPost, ActionName("DeleteUser")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteUserConfirmed(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("CaseworkerPage");
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+
+            return View(user);
+        }
+        [Authorize(Roles = "User")]
+        [HttpGet]
+        public async Task<IActionResult> DeleteSelf()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return View(user);
+        }
+
+        [Authorize]
+        [HttpPost, ActionName("DeleteSelf")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteSelfConfirmed()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+            if (result.Succeeded)
+            {
+                await _signInManager.SignOutAsync();
+                return RedirectToAction("Index", "Home");
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+
+            return View(user);
         }
     }
 }

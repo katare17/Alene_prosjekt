@@ -47,6 +47,7 @@
                 <th>Epost</th>
                 <th>Godkjenn</th>
                 <th>Slett</th>
+                <th>Slett bruker</th>
             </tr>
         </thead>
         <tbody>
@@ -69,6 +70,7 @@
                             }
                         }
                     </td>
+                    @* Lager knapper for å godkjenne eller slette raporter *@
                     <td>
                         <form asp-controller="Account" asp-action="Approve" method="post">
                             <input type="hidden" name="id" value="@change.Id" />
@@ -77,7 +79,12 @@
                     </td>
                     <td>
                         <div class="edit-delete-links">
-                            <a asp-controller="Account" asp-action="CaseworkerDelete" asp-route-id="@change.Id" asp-route-returnUrl="@Url.Action("DeniedReports", "Account")">Slett</a>
+                            <a asp-controller="Account" class="btn btn-danger" asp-action="CaseworkerDelete" asp-route-id="@change.Id" asp-route-returnUrl="@Url.Action("ApprovedReports", "Account")">Slett</a>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="edit-delete-links">
+                            <a asp-controller="Account" asp-action="DeleteUser" asp-route-id="@change.UserId">Slett Bruker</a>
                         </div>
                     </td>
                 </tr>
@@ -102,13 +109,13 @@
 
             changes.forEach(function (element) {
                 try {
-                    console.log("Processing element:", element); // Debugging line
+                    console.log("Processing element:", element); // Debuggingslinje
 
                     var geoJsonData = typeof element.GeoJson === "string"
-                        ? JSON.parse(element.GeoJson) // If it's a string, parse it
-                        : element.GeoJson; // Otherwise, use as-is
+                        ? JSON.parse(element.GeoJson) // Om det er en String så parses den
+                        : element.GeoJson; // Ellers så brukes den som den er
 
-                    console.log("Parsed GeoJSON:", geoJsonData); // Debugging line
+                    console.log("Parsed GeoJSON:", geoJsonData); // Debuggingslinje
 
                     if (geoJsonData) {
                         var popupContent = `<strong>ID:</strong> ${element.Id}<br><strong>Description:</strong> ${element.Description}`;

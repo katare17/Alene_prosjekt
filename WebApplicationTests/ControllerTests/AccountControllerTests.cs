@@ -55,7 +55,7 @@ namespace WebApplication1.Tests
         public async Task UserPage_ReturnsBadRequest_WhenGeoJsonOrDescriptionIsEmpty()
         {
             // Act
-            var result = await _controller.UserPage("", "Description");
+            var result = await _controller.UserPage("", "Description"); // Mangler GeoJson og beskrivelse
 
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
