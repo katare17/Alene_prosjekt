@@ -54,9 +54,9 @@
             {
                 <tr>
                     <td>@change.Id</td>
-                    <td>@change.Fylkesnavn</td>
-                    <td>@change.Kommunenavn</td>
-                    <td>@change.Description</td>
+                    <td>@Html.Encode(change.Fylkesnavn)</td>
+                    <td>@Html.Encode(change.Kommunenavn)</td>
+                    <td>@Html.Encode(change.Description)</td>
                     <td>
                         @{
                             if (userEmails.TryGetValue(change.UserId, out var email))
@@ -73,6 +73,8 @@
 
                     <td>
                         <form asp-controller="Account" asp-action="Reject" method="post">
+                            <!-- CSRF-beskyttelse -->
+                            @Html.AntiForgeryToken()
                             <input type="hidden" name="id" value="@change.Id" />
                             <input type="submit" value="Avslå" class="btn btn-danger" />
                         </form>

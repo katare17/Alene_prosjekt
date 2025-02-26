@@ -253,6 +253,7 @@ namespace WebApplication1.Controllers
 
         [Authorize(Roles = "Caseworker")]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Approve(int id)
         {
             var change = await _context.GeoChanges.FindAsync(id);
@@ -267,6 +268,7 @@ namespace WebApplication1.Controllers
 
         [Authorize(Roles = "Caseworker")]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Reject(int id)
         {
             var change = await _context.GeoChanges.FindAsync(id);

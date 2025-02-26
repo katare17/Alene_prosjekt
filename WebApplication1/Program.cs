@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +27,10 @@ builder.Services.AddIdentity<WebUser, IdentityRole>()
     .AddDefaultTokenProviders();
 
 // Legger til tjenester i containeren
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+});
 
 SetupAuthentication(builder);
 

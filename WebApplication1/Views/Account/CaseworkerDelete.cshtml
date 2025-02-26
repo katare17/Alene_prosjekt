@@ -12,6 +12,7 @@
 <div>
     <hr />
     <form asp-action="CaseworkerDelete" method="post">
+        <!-- CSRF-beskyttelse -->
         @Html.AntiForgeryToken()
         <input type="hidden" asp-for="Id" />
         <button type="submit" class="btn btn-danger">Slett</button>

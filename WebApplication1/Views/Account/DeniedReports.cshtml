@@ -55,9 +55,9 @@
             {
                 <tr>
                     <td>@change.Id</td>
-                    <td>@change.Fylkesnavn</td>
-                    <td>@change.Kommunenavn</td>
-                    <td>@change.Description</td>
+                    <td>@Html.Encode(change.Fylkesnavn)</td>
+                    <td>@Html.Encode(change.Kommunenavn)</td>
+                    <td>@Html.Encode(change.Description)</td>
                     <td>
                         @{
                             if (userEmails.TryGetValue(change.UserId, out var email))
@@ -73,6 +73,8 @@
                     @* Lager knapper for å godkjenne eller slette raporter *@
                     <td>
                         <form asp-controller="Account" asp-action="Approve" method="post">
+                            <!-- CSRF-beskyttelse -->
+                            @Html.AntiForgeryToken()
                             <input type="hidden" name="id" value="@change.Id" />
                             <button type="submit" class="btn btn-success">Godkjenn</button>
                         </form>
