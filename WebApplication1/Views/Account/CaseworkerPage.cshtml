@@ -3,6 +3,7 @@
 @inject UserManager<WebUser> UserManager
 @{
     ViewData["Title"] = "Overview";
+    Layout = "~/Views/Shared/CaseworkerLayout.cshtml";
 
     // Henter inn den innloggede brukeren (for brukerrelatert visning)
     var user = await UserManager.GetUserAsync(User);
@@ -27,9 +28,11 @@
     var filteredModel = Model.Where(change => change.IsApproved == null).ToList();
 }
 
-<h2 class="text-center">Innsendte Rapporter</h2>
-
 <div class="container mt-5">
+<h2 class="text-center">Innsendte Rapporter</h2>
+</div>
+
+@* <div class="container mt-5">
     <div class="row">
         <div class="col-md-4">
             <a asp-controller="Account" asp-action="ApprovedReports" class="btn btn-primary">Approved Reports</a>
@@ -38,7 +41,7 @@
             <a asp-controller="Account" asp-action="DeniedReports" class="btn btn-primary">Denied Reports</a>
         </div>
     </div>
-</div>
+</div> *@
 
 <div class="container mt-5">
     <div id="map" style="height: 500px; width: 100%; border: 3px solid #ccc;"></div>
@@ -49,7 +52,8 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>GeoJSON</th>
+                <th>Fylke</th>
+                <th>Kommune</th>
                 <th>Beskrivelse</th>
                 <th>Epost</th>
                 <th>Godkjenn</th>
@@ -62,7 +66,8 @@
             {
                 <tr>
                     <td>@change.Id</td>
-                    <td>@change.GeoJson</td>
+                    <td>@change.Fylkesnavn</td>
+                    <td>@change.Kommunenavn</td>
                     <td>@change.Description</td>
                     <td>
                         @{

@@ -3,6 +3,7 @@
 @inject UserManager<WebUser> UserManager
 @{
     ViewData["Title"] = "Approved Reports";
+    Layout = "~/Views/Shared/CaseworkerLayout.cshtml";
 
     // Henter inn den innloggede brukeren (for brukerrelatert visning)
     var user = await UserManager.GetUserAsync(User);
@@ -27,8 +28,9 @@
     var filteredModel = Model.Where(change => change.IsApproved == true).ToList();
 }
 
+<div class="container mt-5">
 <h2 class="text-center">Godkjente rapporter</h2>
-
+</div>
 <div class="container mt-5">
     <div id="map" style="height: 500px; width: 100%; border: 3px solid #ccc;"></div>
 </div>
@@ -38,7 +40,8 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>GeoJSON</th>
+                <th>Fylke</th>
+                <th>Kommune</th>
                 <th>Beskrivelse</th>
                 <th>Epost</th>
                 <th>Avslå</th>
@@ -50,7 +53,8 @@
             {
                 <tr>
                     <td>@change.Id</td>
-                    <td>@change.GeoJson</td>
+                    <td>@change.Fylkesnavn</td>
+                    <td>@change.Kommunenavn</td>
                     <td>@change.Description</td>
                     <td>
                         @{

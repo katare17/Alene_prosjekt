@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - WebApplication1</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/WebApplication1.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mulish" />
+    <style>
+        body {
+            font-family: "Mulish", sans-serif !important;
+        }
+        button {
+            background-color: #1A833B !important;
+            border-color: #156630 !important;
+        }
+        button:hover {
+            background-color: #156630 !important;
+            border-color: #1A833B !important;
+        }
+
+        navbar {
+            background-color: #1A833B !important;
+        }
+        .big-btn {
+            height: 200px;
+            width: 300px;
+            font-size: larger;
+        }
+        .logout{
+            float: right !important;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg bg-body-tertiary" style="background-color: #1A833B !important">
+            <div class="container-fluid">
+                <div class="collapse navbar-collapse" id="navbarColor04">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link btn" asp-controller="Account" asp-action="CaseworkerPage" style="color: white !important;"> Kartverket</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn" asp-controller="Account" asp-action="CaseworkerPage" style="color: white !important;"> Alle rapporter</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn" asp-controller="Account" asp-action="ApprovedReports" style="color: white !important;"> Godkjente rapporter</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn" asp-controller="Account" asp-action="DeniedReports" style="color: white !important;"> Avviste rapporter</a>
+                        </li>
+                        <li>
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="form-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="nav-link btn" style="color: white !important; border-color: transparent !important">Logg ut</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/bootstrap.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
