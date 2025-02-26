@@ -3,7 +3,7 @@
 <h2>Registrer ny konto</h2>
 
 <form asp-action="Register" method="post">
-    <!-- CSRF Protection -->
+    <!-- CSRF-Beskyttelse -->
     @Html.AntiForgeryToken()
     <div asp-validation-summary="All" class="text-danger"></div>
 

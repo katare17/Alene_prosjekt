@@ -24,11 +24,13 @@ namespace WebApplication1.Controllers
             _logger = logger;
         }
 
+
         [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -65,11 +67,13 @@ namespace WebApplication1.Controllers
             return View(model);
         }
 
+
         [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -128,12 +132,14 @@ namespace WebApplication1.Controllers
             }
         }
 
+
         [Authorize(Roles = "User")]
         [HttpGet]
         public IActionResult UserPage()
         {
             return View();
         }
+
 
         [Authorize(Roles = "User")]
         [HttpPost]
@@ -165,7 +171,7 @@ namespace WebApplication1.Controllers
                     return BadRequest("Kunne ikke finne kommuneinformasjon. Vennligst sjekk koordinatene.");
                 }
 
-                // Defines a new GeoChange and adds it to the database
+                // Definerer en ny GeoChange og legger den til i databasen
                 var newChange = new GeoChange
                 {
                     GeoJson = geoJson,
@@ -179,7 +185,7 @@ namespace WebApplication1.Controllers
                 _context.GeoChanges.Add(newChange);
                 await _context.SaveChangesAsync();
 
-                // Redirect to the overview of changes
+                // Redirigerer til oversikten over endringer
                 return RedirectToAction("ReportOverview");
             }
             catch (Exception ex)
@@ -188,6 +194,7 @@ namespace WebApplication1.Controllers
                 return StatusCode(500, "Intern serverfeil");
             }
         }
+
 
         // Metode som henter kommuneinfo fra GeoJSON
         private async Task<(string Kommunenummer, string Kommunenavn, string Fylkesnavn)> FinnKommuneAsync(string geoJson)
@@ -217,6 +224,7 @@ namespace WebApplication1.Controllers
             return View(userChanges);
         }
 
+
         [Authorize(Roles = "User")]
         [HttpGet]
         public async Task<IActionResult> Delete(int? id)
@@ -236,6 +244,7 @@ namespace WebApplication1.Controllers
             return View(geoChange);
         }
 
+
         [Authorize(Roles = "User")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -250,6 +259,7 @@ namespace WebApplication1.Controllers
             return RedirectToAction("ReportOverview", "Account");
         }
 
+
         [Authorize(Roles = "Caseworker")]
         [HttpPost]
         public async Task<IActionResult> Approve(int id)
@@ -263,6 +273,7 @@ namespace WebApplication1.Controllers
             return RedirectToAction("CaseworkerPage");
         }
 
+
         [Authorize(Roles = "Caseworker")]
         [HttpPost]
         public async Task<IActionResult> Reject(int id)
@@ -275,11 +286,56 @@ namespace WebApplication1.Controllers
             }
             return RedirectToAction("CaseworkerPage");
         }
+
+        [Authorize(Roles = "Caseworker")]
+        [HttpGet]
+        public IActionResult CaseworkerPage()
+        {
+            var changes_db = _context.GeoChanges.ToList();
+            if (changes_db == null || !changes_db.Any())
+            {
+                return View(new List<GeoChange>());
+            }
+            return View(changes_db);
+        }
+
+        [Authorize(Roles = "Caseworker")]
+        [HttpGet]
+        public async Task<IActionResult> CaseworkerDelete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var geoChange = await _context.GeoChanges
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (geoChange == null)
+            {
+                return NotFound();
+            }
+
+            return View(geoChange);
+        }
+        [Authorize(Roles = "Caseworker")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CaseworkerDelete(int id)
+        {
+            var geoChange = await _context.GeoChanges.FindAsync(id);
+            if (geoChange != null)
+            {
+                _context.GeoChanges.Remove(geoChange);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("CaseworkerPage", "Account");
+        }
+
         public async Task<IActionResult> ApprovedReports()
         {
             var geoChanges = await _context.GeoChanges.Where(c => c.IsApproved == true).ToListAsync();
             return View(geoChanges);
         }
+
 
         public async Task<IActionResult> DeniedReports()
         {
