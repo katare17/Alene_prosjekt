@@ -11,6 +11,8 @@ Lenke til [API-bruk](#api-bruk).
 
 Lenke til [Installasjon](#installasjon).
 
+Lenke til [Caseworker login](#vilduloggeinnsomcaseworker)
+
 Lenke til [Testing](#testing).
 
 Lenke til [Forbedringspotensiale](#forbedringspotensiale).
@@ -116,7 +118,12 @@ Klikk igjen på
 ```
 
 ---
-### Funker det ikke?
+
+### Vil du logge inn som Caseworker?
+Brukernavn: Caseworker@test
+Passord: Test1
+
+### Funker ikke applikasjonen?
 Spør ChatGPT om hjelp ;*
 
 ---
