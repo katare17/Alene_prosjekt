@@ -11,7 +11,7 @@ Lenke til [API-bruk](#api-bruk).
 
 Lenke til [Installasjon](#installasjon).
 
-Lenke til [Caseworker login](#vilduloggeinnsomcaseworker?)
+Lenke til [Caseworker login](#caseworkerlogin)
 
 Lenke til [Testing](#testing).
 
@@ -119,7 +119,7 @@ Klikk igjen på
 
 ---
 
-### Vil du logge inn som Caseworker?
+### Caseworkerlogin
 Brukernavn: Caseworker@test
 Passord: Test1
 
