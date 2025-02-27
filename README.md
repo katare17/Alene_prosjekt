@@ -11,7 +11,7 @@ Lenke til [API-bruk](#api-bruk).
 
 Lenke til [Installasjon](#installasjon).
 
-Lenke til [Caseworker login](#vilduloggeinnsomcaseworker)
+Lenke til [Caseworker login](#vilduloggeinnsomcaseworker?)
 
 Lenke til [Testing](#testing).
 
