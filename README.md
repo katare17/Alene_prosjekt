@@ -120,7 +120,7 @@ Klikk igjen på
 ---
 
 ### Caseworkerlogin
-Brukernavn: Caseworker@test
+Brukernavn: Caseworker@test <br/>
 Passord: Test1
 
 ### Funker ikke applikasjonen?
